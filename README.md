@@ -1,5 +1,5 @@
 <p align="center">
-    <h2 align="center"> 
+    <h2 align="center">
         FilamentPHP Tenant Based in Organization/Company (<b>Single Database</b>)
     </h2>
 </p>
@@ -141,7 +141,13 @@ php artisan storage:link
 
 ```
 
-11. Inside the container run the command below (To Listen Webhook stripe events) Ip 172.17.0.1 It is the default gateway for containers to communicate with the host.
+11. create a new user to access the system
+
+```bash
+php artisan make:filament-user
+```
+
+12. Inside the container run the command below (To Listen Webhook stripe events) Ip 172.17.0.1 It is the default gateway for containers to communicate with the host.
 
 ```bash
 
@@ -149,7 +155,7 @@ stripe listen --forward-to http://172.17.0.1/stripe/webhook
 
 ```
 
-12. The first time you run it, it will generate your webhook key. copy and paste it into your env file.
+13. The first time you run it, it will generate your webhook key. copy and paste it into your env file.
 
 ```
 STRIPE_WEBHOOK_SECRET=your_stripe_webhook_secret
@@ -188,7 +194,7 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 For support, please email wallacemartinss@gmail.com or create an issue in the GitHub repository.
 
 <br>
-    <h4 align="center"> 
+    <h4 align="center">
         🚧  Project 🚀 under construction...  🚧
     </h4>
 <br>
