@@ -2,18 +2,13 @@
 
 namespace App\Filament\Admin\Resources\TicketResource\Widgets;
 
-use App\Models\Price;
-use App\Models\Organization;
-use App\Models\Subscription;
 use App\Models\Ticket;
-use Illuminate\Database\Eloquent\Model;
-use Filament\Widgets\StatsOverviewWidget\Stat;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
+use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class StatsTicketsOverview extends BaseWidget
 {
-
-     protected static bool $isLazy = true;
+    protected static bool $isLazy = true;
 
     protected function getStats(): array
     {
@@ -30,27 +25,32 @@ class StatsTicketsOverview extends BaseWidget
                 ->color('danger')
                 ->chart([7, 3, 4, 5, 6, 3, 5, 3]),
 
-            Stat::make('Melhorias Propostas', Ticket::where('type','enhancement')->count())
+            Stat::make('Melhorias Propostas', Ticket::where('type', 'enhancement')->count())
                 ->description('Melhorias')
                 ->color('success')
                 ->descriptionIcon('heroicon-s-cog-6-tooth')
                 ->chart([7, 3, 4, 5, 6, 3, 5, 5]),
 
             Stat::make('Tempo Médio de Resolução', function () {
-                    $averageTime = Ticket::whereNotNull('closed_at')
-                        ->selectRaw('AVG(TIMESTAMPDIFF(HOUR, created_at, closed_at)) as avg_resolution_time')
-                        ->value('avg_resolution_time');
+                $tickets = Ticket::whereNotNull('closed_at')->get(['created_at', 'closed_at']);
 
-                    // Se o valor for menor que 0 ou nulo, retorna 0 horas
-                    return number_format(max($averageTime, 0), 2, ',', '.') . ' horas';
-                })
+                if ($tickets->isEmpty()) {
+                    return '0,00 horas';
+                }
+
+                $totalHours = $tickets->reduce(function ($carry, $ticket) {
+                    return $carry + $ticket->created_at->diffInHours($ticket->closed_at);
+                }, 0);
+
+                $averageTime = $totalHours / $tickets->count();
+
+                return number_format(max($averageTime, 0), 2, ',', '.') . ' horas';
+            })
                 ->description('tempo')
                 ->color('warning')
                 ->descriptionIcon('heroicon-s-clock')
                 ->chart([7, 3, 4, 5, 6, 3, 5, 5]),
-            ];
-        }
 
-
-
+        ];
+    }
 }

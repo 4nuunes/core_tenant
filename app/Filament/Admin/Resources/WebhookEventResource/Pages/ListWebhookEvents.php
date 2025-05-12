@@ -2,10 +2,10 @@
 
 namespace App\Filament\Admin\Resources\WebhookEventResource\Pages;
 
-use Filament\Actions;
-use Filament\Resources\Pages\ListRecords;
 use App\Filament\Admin\Resources\WebhookEventResource;
 use App\Filament\Admin\Resources\WebhookEventResource\Widgets\StatsWebhookOverview;
+use Filament\Actions;
+use Filament\Resources\Pages\ListRecords;
 
 class ListWebhookEvents extends ListRecords
 {

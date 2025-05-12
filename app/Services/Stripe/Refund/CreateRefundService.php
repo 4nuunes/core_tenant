@@ -2,16 +2,14 @@
 
 namespace App\Services\Stripe\Refund;
 
-use Exception;
-use App\Models\Subscription;
-use App\Models\SubscriptionRefund;
-use Illuminate\Support\Facades\Log;
+use App\Models\{Subscription, SubscriptionRefund};
 use App\Services\Traits\StripeClientTrait;
+use Exception;
+use Illuminate\Support\Facades\Log;
 
 class CreateRefundService
 {
     use StripeClientTrait;
-
 
     public function __construct()
     {
@@ -36,24 +34,22 @@ class CreateRefundService
                 throw new Exception('Pagamento não encontrado para reembolso.');
             }
 
-
-
             // Criar o reembolso no Stripe
             $refund = $this->stripe->refunds->create([
                 'payment_intent' => $paymentIntent,
-                'amount' => (int)($data['amount'] * 100),
-                'reason' => $data['reason'],
+                'amount'         => (int)($data['amount'] * 100),
+                'reason'         => $data['reason'],
             ]);
 
             $refundRecord = SubscriptionRefund::create([
                 'organization_id' => $subscription->organization_id,
                 'subscription_id' => $subscription->id,
-                'stripe_id' => $subscription->stripe_id,
-                'refund_id' => $refund->id,
-                'amount' => (int)($data['amount'] * 100),
-                'reason' => $data['reason'],
-                'currency' => $data['currency'],
-                'status' => $refund->status,
+                'stripe_id'       => $subscription->stripe_id,
+                'refund_id'       => $refund->id,
+                'amount'          => (int)($data['amount'] * 100),
+                'reason'          => $data['reason'],
+                'currency'        => $data['currency'],
+                'status'          => $refund->status,
             ]);
 
             return $refundRecord;

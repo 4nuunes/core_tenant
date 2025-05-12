@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class WebhookEvent extends Model
 {
@@ -16,6 +16,4 @@ class WebhookEvent extends Model
         'received_at',
         'created_at',
     ];
-
-
 }

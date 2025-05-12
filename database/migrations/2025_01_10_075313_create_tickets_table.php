@@ -1,14 +1,11 @@
 <?php
 
-use App\Models\User;
-use App\Models\Ticket;
-use App\Models\Organization;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
+use App\Models\{Organization, Ticket, User};
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class () extends Migration {
     /**
      * Run the migrations.
      */
@@ -22,15 +19,15 @@ return new class extends Migration
             $table->text('description');
             $table->string('image_path')->nullable();
             $table->string('file')->nullable();
-            $table->string('status')->default('open'); 
-            $table->string('type')->default('enhancement'); 
+            $table->string('status')->default('open');
+            $table->string('type')->default('enhancement');
             $table->string('priority')->default('medium');
             $table->timestamp('closed_at')->nullable();
             $table->timestamps();
         });
 
         Schema::create('ticket_responses', function (Blueprint $table) {
-          
+
             $table->id();
             $table->foreignIdFor(Ticket::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(User::class)->nullable()->constrained()->cascadeOnDelete(); // Pode ser nulo se for um admin
@@ -38,7 +35,7 @@ return new class extends Migration
             $table->string('file')->nullable();
             $table->text('message');
             $table->timestamps();
-           
+
         });
     }
 

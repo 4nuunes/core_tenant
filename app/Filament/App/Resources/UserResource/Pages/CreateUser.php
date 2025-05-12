@@ -2,12 +2,11 @@
 
 namespace App\Filament\App\Resources\UserResource\Pages;
 
-use Filament\Actions;
-use App\Models\Organization;
-use App\Mail\WelcomeUserMail;
-use Illuminate\Support\Facades\Mail;
-use Filament\Resources\Pages\CreateRecord;
 use App\Filament\App\Resources\UserResource;
+use App\Mail\WelcomeUserMail;
+use App\Models\Organization;
+use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Support\Facades\Mail;
 
 class CreateUser extends CreateRecord
 {
@@ -17,12 +16,13 @@ class CreateUser extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $password = $this->generateRandomPassword(10);
+        $password            = $this->generateRandomPassword(10);
         $this->plainPassword = $password;
 
-        $data['password'] = bcrypt($password);
+        $data['password']          = bcrypt($password);
         $data['email_verified_at'] = now();
-        $data['is_tenant_admin'] = false;
+        $data['is_tenant_admin']   = false;
+
         return $data;
     }
 
@@ -45,6 +45,7 @@ class CreateUser extends CreateRecord
     protected function generateRandomPassword($length = 10)
     {
         $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_-+=<>?';
+
         return substr(str_shuffle($characters), 0, $length);
     }
 

@@ -1,22 +1,23 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace App\Filament\Actions;
 
-use Closure;
-use Stripe\Stripe;
-use Illuminate\View\View;
-use Illuminate\Support\Arr;
-use App\Models\Organization;
-use Filament\Actions\Action;
-use Stripe\Checkout\Session;
-use Illuminate\Support\HtmlString;
-use App\Forms\Components\RadioGroup;
-use Filament\Support\Enums\MaxWidth;
 use App\Data\Stripe\StripeDataLoader;
-use Illuminate\Contracts\Support\Htmlable;
+use App\Forms\Components\RadioGroup;
+use App\Models\Organization;
+
 use function App\Support\tenant;
+
+use Closure;
+use Filament\Actions\Action;
+use Filament\Support\Enums\MaxWidth;
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\{Arr, HtmlString};
+use Illuminate\View\View;
+use Stripe\Checkout\Session;
+use Stripe\Stripe;
 
 class SubscribePlanAction extends Action
 {
@@ -52,7 +53,7 @@ class SubscribePlanAction extends Action
                 ->size('xl')
                 ->extraAttributes(['class' => 'w-full'])
                 ->action(function (Action $action) {
-                    $actions = $action->getLivewire()->mountedActionsData;
+                    $actions       = $action->getLivewire()->mountedActionsData;
                     $billingPeriod = data_get(Arr::first($actions), 'billing_period');
 
                     // Chama a função que cria a sessão de checkout e redireciona o usuário
@@ -81,6 +82,7 @@ class SubscribePlanAction extends Action
     public function brandLogo(string | Htmlable | Closure | null $logo): static
     {
         $this->brandLogo = $logo;
+
         return $this;
     }
 
@@ -99,6 +101,7 @@ class SubscribePlanAction extends Action
         $products = StripeDataLoader::getProductsData();
 
         $periods = [];
+
         foreach ($products as $product) {
             foreach ($product['prices'] as $price) {
                 $periods[$price['interval']] = ucfirst($price['interval']);
@@ -115,52 +118,52 @@ class SubscribePlanAction extends Action
      * @return void
      */
     protected function checkoutUrl(string $billingPeriod): void
-{
-    // Obtém a organização (tenant) atual
+    {
+        // Obtém a organização (tenant) atual
 
+        $organization = tenant(Organization::class);
 
-    $organization = tenant(Organization::class);
+        if (!$organization->stripe_id) {
+            throw new \Exception('A organização não possui um ID do Stripe associado.');
+        }
 
-    if (!$organization->stripe_id) {
-        throw new \Exception('A organização não possui um ID do Stripe associado.');
-    }
+        // Configura a API Key da Stripe
+        Stripe::setApiKey(env('STRIPE_SECRET'));
 
-    // Configura a API Key da Stripe
-    Stripe::setApiKey(env('STRIPE_SECRET'));
+        // Obtém o produto e o preço com base no período de cobrança selecionado
+        $products = StripeDataLoader::getProductsData();
+        $priceId  = null;
 
-    // Obtém o produto e o preço com base no período de cobrança selecionado
-    $products = StripeDataLoader::getProductsData();
-    $priceId = null;
+        foreach ($products as $product) {
+            foreach ($product['prices'] as $price) {
+                if ($price['interval'] === $billingPeriod) {
+                    $priceId = $price['stripe_price_id']; // Garante que está pegando o ID do preço
 
-    foreach ($products as $product) {
-        foreach ($product['prices'] as $price) {
-            if ($price['interval'] === $billingPeriod) {
-                $priceId = $price['stripe_price_id']; // Garante que está pegando o ID do preço
-                break 2;
+                    break 2;
+                }
             }
         }
-    }
 
-    // Cria a sessão de checkout
-    $checkoutSession = Session::create([
+        // Cria a sessão de checkout
+        $checkoutSession = Session::create([
 
-        'payment_method_types' => ['card'],
+            'payment_method_types' => ['card'],
 
-        'mode' => 'subscription',
-        'customer' => $organization->stripe_id, // Certifique-se de que a organização tenha um stripe_id
-        'line_items' => [
-            [
-                'price' => $priceId, // Aqui vai o ID do objeto de preço
-                'quantity' => 1,
+            'mode'       => 'subscription',
+            'customer'   => $organization->stripe_id, // Certifique-se de que a organização tenha um stripe_id
+            'line_items' => [
+                [
+                    'price'    => $priceId, // Aqui vai o ID do objeto de preço
+                    'quantity' => 1,
+                ],
             ],
-        ],
-        'success_url' => url('/app'), // Redireciona para o dashboard do Filament
-        'cancel_url' => url('/app'),  // Redireciona para o dashboard caso o pagamento seja cancelado
+            'success_url' => url('/app'), // Redireciona para o dashboard do Filament
+            'cancel_url'  => url('/app'),  // Redireciona para o dashboard caso o pagamento seja cancelado
 
-    ]);
+        ]);
 
-    // Redireciona para a URL de checkout
-    redirect()->away($checkoutSession->url);
-}
+        // Redireciona para a URL de checkout
+        redirect()->away($checkoutSession->url);
+    }
 
 }

@@ -1,12 +1,12 @@
 <?php
 
 namespace App\Filament\Pages\Auth;
+
+use Filament\Forms\Components\{Component, TextInput};
 use Filament\Forms\Form;
-use Filament\Forms\Components\Component;
-use Filament\Forms\Components\TextInput;
+use Filament\Http\Responses\Auth\Contracts\LoginResponse;
 use Filament\Pages\Auth\Login as BaseAuth;
 use Illuminate\Validation\ValidationException;
-use Filament\Http\Responses\Auth\Contracts\LoginResponse;
 
 class Login extends BaseAuth
 {
@@ -45,7 +45,7 @@ class Login extends BaseAuth
         $type = filter_var($data['username'], FILTER_VALIDATE_EMAIL) ? 'email' : 'name';
 
         return [
-            $type => $data['username'],
+            $type      => $data['username'],
             'password' => $data['password'],
         ];
     }

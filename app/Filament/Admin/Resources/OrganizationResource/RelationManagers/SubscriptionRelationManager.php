@@ -2,36 +2,28 @@
 
 namespace App\Filament\Admin\Resources\OrganizationResource\RelationManagers;
 
-
-use DB;
-use Carbon\Carbon;
-use Stripe\StripeClient;
-use Filament\Tables\Table;
-use Illuminate\Support\Env;
-use Filament\Tables\Actions\Action;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Textarea;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
-use Filament\Tables\Actions\ActionGroup;
-use App\Enums\Stripe\ProductCurrencyEnum;
-use App\Enums\Stripe\ProductIntervalEnum;
-use App\Enums\Stripe\SubscriptionStatusEnum;
-use Leandrocfe\FilamentPtbrFormFields\Money;
-use App\Services\Stripe\Refund\CreateRefundService;
 use App\Enums\Stripe\Refunds\RefundSubscriptionEnum;
-use Filament\Resources\RelationManagers\RelationManager;
+use App\Enums\Stripe\{ProductCurrencyEnum, SubscriptionStatusEnum};
+use App\Services\Stripe\Refund\CreateRefundService;
 use App\Services\Stripe\Subscription\CancelSubscriptionService;
+use Carbon\Carbon;
+use Filament\Forms\Components\{Fieldset, Select, TextInput};
+use Filament\Notifications\Notification;
+use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables\Actions\{Action, ActionGroup};
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Leandrocfe\FilamentPtbrFormFields\Money;
 
 class SubscriptionRelationManager extends RelationManager
 {
     protected static string $relationship = 'subscriptions';
-    protected static ?string $modelLabel = 'Assinatura';
-    protected static ?string $modelLabelPlural = "Assinaturas";
-    protected static ?string $title = 'Subscrições do Tenant';
 
+    protected static ?string $modelLabel = 'Assinatura';
+
+    protected static ?string $modelLabelPlural = "Assinaturas";
+
+    protected static ?string $title = 'Subscrições do Tenant';
 
     public function table(Table $table): Table
     {
@@ -42,8 +34,8 @@ class SubscriptionRelationManager extends RelationManager
                 TextColumn::make('stripe_status')
                     ->label('Status')
                     ->badge()
-                    ->formatStateUsing(fn($state) => SubscriptionStatusEnum::from($state)->getLabel())
-                    ->color(fn($state) => SubscriptionStatusEnum::from($state)->getColor())
+                    ->formatStateUsing(fn ($state) => SubscriptionStatusEnum::from($state)->getLabel())
+                    ->color(fn ($state) => SubscriptionStatusEnum::from($state)->getColor())
                     ->alignCenter()
                     ->sortable()
                     ->searchable(),
@@ -92,7 +84,7 @@ class SubscriptionRelationManager extends RelationManager
                         }
 
                         // Calcula a diferença total em dias e horas
-                        $remainingDays = $now->diffInDays($endsAt, false);
+                        $remainingDays  = $now->diffInDays($endsAt, false);
                         $remainingHours = $now->diffInHours($endsAt) % 24;
 
                         return sprintf('%d dias e %02d horas', $remainingDays, $remainingHours);
@@ -133,6 +125,7 @@ class SubscriptionRelationManager extends RelationManager
                                         ->readOnly()
                                         ->default(function ($record) {
                                             $price = $record->price ? $record->price->unit_amount : 0;
+
                                             return 'R$ ' . number_format($price, 2, ',', '.');  // Exemplo: R$ 599,99
                                         }),
                                 ])->columns(2),
@@ -189,7 +182,6 @@ class SubscriptionRelationManager extends RelationManager
                         ->icon('fas-hand-holding-dollar')
                         ->action(function (Action $action, $record, array $data) {
 
-
                             try {
                                 //$refundService = new CreateRefundService();
                                 //$refundService->processRefund($record->id, $data);
@@ -212,11 +204,13 @@ class SubscriptionRelationManager extends RelationManager
                     Action::make('Baixar Invoice')
                         ->label('Baixar Invoice')
                         ->icon('heroicon-o-document-arrow-down')
-                        ->url(fn($record) => $record->invoice_pdf)
+                        ->url(fn ($record) => $record->invoice_pdf)
                         ->tooltip('Baixar PDF da Fatura')
                         ->color('primary'),
 
                 ])
+                ->icon('fas-sliders')
+                ->color('warning'),
             ])
 
             ->bulkActions([]);

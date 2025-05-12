@@ -2,19 +2,18 @@
 
 namespace App\Jobs;
 
-use Carbon\Carbon;
-use App\Models\WebhookEvent;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Queue\{InteractsWithQueue, SerializesModels};
+use Illuminate\Support\Facades\{Log};
 
 class CleanWebhookEventsJob implements ShouldQueue
 {
-    use Queueable, InteractsWithQueue, SerializesModels, Dispatchable;
+    use Queueable;
+    use InteractsWithQueue;
+    use SerializesModels;
+    use Dispatchable;
 
     /**
      * Execute the job.
@@ -22,7 +21,6 @@ class CleanWebhookEventsJob implements ShouldQueue
     public function handle()
     {
         Log::info("CleanWebhookEventsJob iniciado.");
-
 
     }
 }

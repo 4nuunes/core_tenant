@@ -2,32 +2,26 @@
 
 namespace App\Providers\Filament;
 
-use Filament\Panel;
-use Filament\Widgets;
-use Filament\PanelProvider;
-use App\Models\Organization;
+use App\Filament\Billing\BillingProvider;
+use App\Filament\Pages\Auth\Register;
 use App\Filament\Pages\Dashboard;
+use App\Filament\Pages\Tenancy\RegisterOrganization;
+use App\Http\Middleware\FilamentSettings;
+use App\Models\{Organization, User};
+use Filament\Http\Middleware\{Authenticate, AuthenticateSession, DisableBladeIconComponents, DispatchServingFilamentEvent};
 use Filament\Navigation\MenuItem;
+use Filament\Pages\Auth\EmailVerification\EmailVerificationPrompt;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\MaxWidth;
-use Illuminate\Support\Facades\Auth;
-use App\Filament\Pages\Auth\Register;
-use App\Filament\Billing\BillingProvider;
-use App\Http\Middleware\FilamentSettings;
-use Filament\Http\Middleware\Authenticate;
-use Illuminate\Session\Middleware\StartSession;
-use Illuminate\Cookie\Middleware\EncryptCookies;
-use Filament\Http\Middleware\AuthenticateSession;
-use App\Filament\Pages\Tenancy\RegisterOrganization;
-use Illuminate\Routing\Middleware\SubstituteBindings;
-use Illuminate\View\Middleware\ShareErrorsFromSession;
-use Filament\Http\Middleware\DisableBladeIconComponents;
-use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\{Panel, PanelProvider, Widgets};
+use Illuminate\Cookie\Middleware\{AddQueuedCookiesToResponse, EncryptCookies};
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
-use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
-use Joaopaulolndev\FilamentEditProfile\Pages\EditProfilePage;
+use Illuminate\Routing\Middleware\SubstituteBindings;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Joaopaulolndev\FilamentEditProfile\FilamentEditProfilePlugin;
-use Filament\Pages\Auth\EmailVerification\EmailVerificationPrompt;
+use Joaopaulolndev\FilamentEditProfile\Pages\EditProfilePage;
 
 class AppPanelProvider extends PanelProvider
 {
@@ -50,13 +44,19 @@ class AppPanelProvider extends PanelProvider
                 'profile' => MenuItem::make()
                     ->label('Meu Perfil')
                     // ->label( fn() =>Auth::user()->name)
-                    ->url(fn (): string => EditProfilePage::getUrl())
+                    ->url(
+                        fn () => User::find(Auth::user()->id)->hasVerifiedEmail()
+
+                        ? rescue(fn () => EditProfilePage::getUrl(), null)
+                        : null
+                    )
                     ->icon('heroicon-m-user-circle')
                     // If you are using tenancy need to check with the visible method where ->company() is the relation between the user and tenancy model as you called
                     ->visible(function (): bool {
                         $user = Auth::user();
 
-                        return $user && method_exists($user, 'organizations') && $user->organizations()->exists();
+                        return $user instanceof User && method_exists($user, 'organizations') && $user->organizations()->exists();
+
                     }),
             ])
             ->userMenuItems([
@@ -67,9 +67,9 @@ class AppPanelProvider extends PanelProvider
                     ->visible(fn (): bool => Auth::user()->is_admin),
             ])
             ->colors([
-                'danger' => Color::Red,
-                'gray' => Color::Slate,
-                'info' => Color::Blue,
+                'danger'  => Color::Red,
+                'gray'    => Color::Slate,
+                'info'    => Color::Blue,
                 'success' => Color::Emerald,
                 'warning' => Color::Orange,
                 'primary' => Color::Amber,
@@ -77,7 +77,6 @@ class AppPanelProvider extends PanelProvider
             ->navigationGroups([
                 'Administração',
                 'Suporte',
-
 
             ])
             ->discoverResources(in: app_path('Filament/App/Resources'), for: 'App\\Filament\\App\\Resources')
@@ -126,7 +125,7 @@ class AppPanelProvider extends PanelProvider
             ])
             ->tenant(Organization::class, ownershipRelationship: 'organization', slugAttribute: 'slug')
             ->tenantRegistration(RegisterOrganization::class)
-            ->tenantBillingProvider(new BillingProvider)
+            ->tenantBillingProvider(new BillingProvider())
             ->requiresTenantSubscription();
     }
 }

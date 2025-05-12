@@ -2,8 +2,7 @@
 
 namespace App\Enums\Stripe;
 
-use Filament\Support\Contracts\HasColor;
-use Filament\Support\Contracts\HasLabel;
+use Filament\Support\Contracts\{HasColor, HasLabel};
 
 enum ProductCurrencyEnum: string implements HasLabel, HasColor
 {

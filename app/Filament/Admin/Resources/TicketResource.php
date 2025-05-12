@@ -2,49 +2,35 @@
 
 namespace App\Filament\Admin\Resources;
 
-use Closure;
-use Carbon\Carbon;
-use Filament\Forms;
-use App\Models\User;
-use Filament\Tables;
-use App\Models\Ticket;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use App\Models\Organization;
-use Filament\Resources\Resource;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Fieldset;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ViewAction;
-use Filament\Tables\Columns\TextColumn;
-use Illuminate\Database\Eloquent\Model;
-use Filament\Forms\Components\TextInput;
-use Filament\Tables\Actions\ActionGroup;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\RichEditor;
-use Filament\Tables\Actions\DeleteAction;
-use Illuminate\Database\Eloquent\Builder;
-use App\Enums\TenantSuport\TicketTypeEnum;
-use App\Enums\TenantSuport\TicketStatusEnum;
-use App\Enums\TenantSuport\TicketPriorityEnum;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Admin\Resources\TicketResource\Pages;
-use App\Filament\Admin\Resources\TicketResource\RelationManagers;
+use App\Enums\TenantSuport\{TicketPriorityEnum, TicketStatusEnum, TicketTypeEnum};
 use App\Filament\Admin\Resources\TicketResource\RelationManagers\TicketResponsesRelationManager;
+use App\Filament\Admin\Resources\TicketResource\{Pages};
+use App\Models\{Organization, Ticket};
+use Carbon\Carbon;
+use Filament\Forms\Components\{Fieldset, FileUpload, RichEditor, Select, TextInput};
+use Filament\Forms\{Form, Set};
+use Filament\Resources\Resource;
+use Filament\Tables\Actions\{ActionGroup, DeleteAction, EditAction, ViewAction};
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Filament\{Tables};
+use Illuminate\Database\Eloquent\{Model};
 
 class TicketResource extends Resource
 {
     protected static ?string $model = Ticket::class;
 
     protected static ?string $navigationIcon = 'fas-comment-dots';
-    protected static ?string $navigationGroup = 'Administração';
-    protected static ?string $navigationLabel = 'Solicitações';
-    protected static ?string $modelLabel = 'Ticket';
-    protected static ?string $modelLabelPlural = "Tickets";
-    protected static ?int $navigationSort = 2;
 
+    protected static ?string $navigationGroup = 'Administração';
+
+    protected static ?string $navigationLabel = 'Solicitações';
+
+    protected static ?string $modelLabel = 'Ticket';
+
+    protected static ?string $modelLabelPlural = "Tickets";
+
+    protected static ?int $navigationSort = 2;
 
     public static function getNavigationBadge(): ?string
     {
@@ -74,7 +60,6 @@ class TicketResource extends Resource
                                 // Limpar o campo de usuário quando a organização for alterada
                                 $set('user_id', null);
                             }),
-
 
                         Select::make('user_id')
                             ->label('Usuario')
@@ -191,8 +176,8 @@ class TicketResource extends Resource
                     ->label('Tempo de Vida')
                     ->getStateUsing(function (Model $record) {
                         $createdAt = Carbon::parse($record->created_at);
-                        $closedAt = $record->closed_at ? Carbon::parse($record->closed_at) : now();
-                        $diff = $createdAt->diff($closedAt);
+                        $closedAt  = $record->closed_at ? Carbon::parse($record->closed_at) : now();
+                        $diff      = $createdAt->diff($closedAt);
 
                         return "{$diff->d} dias, {$diff->h} horas";
                     })
@@ -244,10 +229,10 @@ class TicketResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListTickets::route('/'),
+            'index'  => Pages\ListTickets::route('/'),
             'create' => Pages\CreateTicket::route('/create'),
-            'view' => Pages\ViewTicket::route('/{record}'),
-            'edit' => Pages\EditTicket::route('/{record}/edit'),
+            'view'   => Pages\ViewTicket::route('/{record}'),
+            'edit'   => Pages\EditTicket::route('/{record}/edit'),
         ];
     }
 }

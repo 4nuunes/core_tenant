@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace App\Support;
 
@@ -16,7 +16,7 @@ namespace App\Support;
 use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Model;
 
-if (! function_exists('tenant')) {
+if (!function_exists('tenant')) {
     /**
      * @template TValue of Model
      *
@@ -30,7 +30,7 @@ if (! function_exists('tenant')) {
         return once(static function () use ($class, $attribute) {
             $tenant = Filament::getTenant();
 
-            if (! $tenant instanceof $class) {
+            if (!$tenant instanceof $class) {
                 return null;
             }
 

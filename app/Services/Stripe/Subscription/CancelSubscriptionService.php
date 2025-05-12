@@ -30,10 +30,10 @@ class CancelSubscriptionService
 
             SubscriptionCancellation::create([
                 'organization_id' => $record->organization_id,
-                'stripe_id' => $record->stripe_id,
-                'reason' => $data['reason'],
-                'coments' => $data['coments'],
-                'rating' => $data['rating'],
+                'stripe_id'       => $record->stripe_id,
+                'reason'          => $data['reason'],
+                'coments'         => $data['coments'],
+                'rating'          => $data['rating'],
             ]);
 
             Notification::make()
@@ -49,7 +49,6 @@ class CancelSubscriptionService
                 ->body('Ocorreu um erro ao cancelar a assinatura. Tente novamente mais tarde.')
                 ->danger()
                 ->send();
-
 
         }
     }

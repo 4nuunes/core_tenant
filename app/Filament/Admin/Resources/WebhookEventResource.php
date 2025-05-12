@@ -2,33 +2,31 @@
 
 namespace App\Filament\Admin\Resources;
 
-use Filament\Forms;
-use Filament\Tables;
-use Livewire\Livewire;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
+use App\Filament\Admin\Resources\WebhookEventResource\{Pages};
 use App\Models\WebhookEvent;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\Action;
 use Filament\Support\Enums\MaxWidth;
+use Filament\Tables\Actions\{Action};
+use Filament\Tables\Table;
+use Filament\{Tables};
 
-use Filament\Tables\Actions\ViewAction;
-use Illuminate\Database\Eloquent\Builder;
 use Novadaemon\FilamentPrettyJson\PrettyJson;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Admin\Resources\WebhookEventResource\Pages;
-use Filament\Support\View\Components\Modal as FilamentModal;
-use App\Filament\Admin\Resources\WebhookEventResource\RelationManagers;
 
 class WebhookEventResource extends Resource
 {
     protected static ?string $model = WebhookEvent::class;
 
     protected static ?string $navigationIcon = 'fas-circle-nodes';
+
     protected static ?string $navigationGroup = 'Sistema';
+
     protected static ?string $navigationLabel = 'Webhook';
+
     protected static ?string $modelLabel = 'Webhooks';
+
     protected static ?string $modelLabelPlural = "Webhooks";
+
     protected static ?int $navigationSort = 1;
 
     public static function getNavigationBadge(): ?string
@@ -40,7 +38,7 @@ class WebhookEventResource extends Resource
     {
         return $form
             ->schema([
-                PrettyJson::make('payload')
+                PrettyJson::make('payload'),
             ]);
     }
 
@@ -84,7 +82,7 @@ class WebhookEventResource extends Resource
                             // Exibir o modal com a view do payload
                             return view('filament.pages.actions.view-payload', ['payload' => $record->payload]);
                         })
-                    ->modalContent(fn($record) => view('filament.pages.actions.view-payload', ['payload' => $record->payload])) // Define o conteúdo do modal
+                    ->modalContent(fn ($record) => view('filament.pages.actions.view-payload', ['payload' => $record->payload])) // Define o conteúdo do modal
                     ->modalSubmitAction(false)
                     ->modalCancelAction(false)
                     ->modalWidth(MaxWidth::FourExtraLarge)
@@ -108,10 +106,10 @@ class WebhookEventResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListWebhookEvents::route('/'),
+            'index'  => Pages\ListWebhookEvents::route('/'),
             'create' => Pages\CreateWebhookEvent::route('/create'),
-            'view' => Pages\ViewWebhookEvent::route('/{record}'),
-            'edit' => Pages\EditWebhookEvent::route('/{record}/edit'),
+            'view'   => Pages\ViewWebhookEvent::route('/{record}'),
+            'edit'   => Pages\EditWebhookEvent::route('/{record}/edit'),
         ];
     }
     public static function canCreate(): bool

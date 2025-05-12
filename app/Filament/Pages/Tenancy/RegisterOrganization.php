@@ -2,20 +2,14 @@
 
 namespace App\Filament\Pages\Tenancy;
 
-use Stripe\Stripe;
-use Stripe\Customer;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
-use Filament\Forms\Form;
-use Illuminate\Support\Str;
 use App\Models\Organization;
-use Illuminate\Support\Facades\Auth;
-use App\Services\PaymentGateway\Gateway;
-use Filament\Forms\Components\TextInput;
-use Filament\Pages\Tenancy\RegisterTenant;
-use Leandrocfe\FilamentPtbrFormFields\Document;
-use Leandrocfe\FilamentPtbrFormFields\PhoneNumber;
 use App\Services\Stripe\Customer\CreateStripeCustomerService;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\{Form, Set};
+use Filament\Pages\Tenancy\RegisterTenant;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use Leandrocfe\FilamentPtbrFormFields\{Document, PhoneNumber};
 
 class RegisterOrganization extends RegisterTenant
 {
@@ -46,7 +40,6 @@ class RegisterOrganization extends RegisterTenant
                     ->validationMessages([
                         'unique' => 'E-mail já cadastrado.',
                     ]),
-
 
                 PhoneNumber::make('phone')
                     ->label('Celular da Empresa')

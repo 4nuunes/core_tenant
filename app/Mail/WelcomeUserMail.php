@@ -2,20 +2,20 @@
 
 namespace App\Mail;
 
-use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
-use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\{Content};
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Mail\Mailables\Envelope;
-use Illuminate\Contracts\Queue\ShouldQueue;
 
 class WelcomeUserMail extends Mailable
 {
-    use Queueable, SerializesModels;
+    use Queueable;
+    use SerializesModels;
 
     public $name;
+
     public $password;
+
     public $organizationName;
     /**
      * Create a new message instance.
@@ -26,8 +26,8 @@ class WelcomeUserMail extends Mailable
      */
     public function __construct($name, $password, $organizationName)
     {
-        $this->name = $name;
-        $this->password = $password;
+        $this->name             = $name;
+        $this->password         = $password;
         $this->organizationName = $organizationName;
     }
 
@@ -39,8 +39,8 @@ class WelcomeUserMail extends Mailable
         return $this->subject('Bem-vindo(a) à sua conta no ' . $this->organizationName)
                     ->view('emails.welcome_user')
                     ->with([
-                        'name' => $this->name,
-                        'password' => $this->password,
+                        'name'             => $this->name,
+                        'password'         => $this->password,
                         'organizationName' => $this->organizationName,
                     ]);
     }

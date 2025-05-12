@@ -2,24 +2,19 @@
 
 namespace App\Livewire;
 
-use Filament\Forms;
-use App\Models\User;
-use Livewire\Component;
+use Filament\Forms\Components\{ColorPicker, Section};
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Illuminate\Contracts\View\View;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Components\Fieldset;
-use Illuminate\Database\Eloquent\Model;
-use Filament\Forms\Components\ColorPicker;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Joaopaulolndev\FilamentEditProfile\Concerns\HasSort;
-use Joaopaulolndev\FilamentEditProfile\Concerns\HasUser;
+use Joaopaulolndev\FilamentEditProfile\Concerns\{HasSort, HasUser};
+use Livewire\Component;
 
 class ColorProfileComponent extends Component implements HasForms
 {
-    use InteractsWithForms, HasSort, HasUser;
-
+    use InteractsWithForms;
+    use HasSort;
+    use HasUser;
 
     public ?array $data = [];
 
@@ -29,9 +24,9 @@ class ColorProfileComponent extends Component implements HasForms
 
     public function mount(): void
     {
-       $this->user = $this->getUser();
-       $this->userClass = get_class($this->user);
-       $this->form->fill($this->user->only('settings'));
+        $this->user      = $this->getUser();
+        $this->userClass = get_class($this->user);
+        $this->form->fill($this->user->only('settings'));
 
     }
 
@@ -48,7 +43,7 @@ class ColorProfileComponent extends Component implements HasForms
                             ->label('Cor do tema')
                             ->columnSpanFull()
                             ->inLineLabel()
-                            ->default('#f59e0b')
+                            ->default('#f59e0b'),
                     ]),
 
             ])
@@ -67,7 +62,6 @@ class ColorProfileComponent extends Component implements HasForms
     {
         redirect((request()->header('referer')));
     }
-
 
     public function render(): View
     {

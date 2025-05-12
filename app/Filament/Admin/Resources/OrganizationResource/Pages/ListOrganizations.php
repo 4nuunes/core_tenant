@@ -2,16 +2,14 @@
 
 namespace App\Filament\Admin\Resources\OrganizationResource\Pages;
 
-use Filament\Actions;
-use Filament\Resources\Pages\ListRecords;
 use App\Filament\Admin\Resources\OrganizationResource;
 use App\Filament\Admin\Resources\OrganizationResource\Widgets\StatsTenantOverview;
-
+use Filament\Actions;
+use Filament\Resources\Pages\ListRecords;
 
 class ListOrganizations extends ListRecords
 {
     protected static string $resource = OrganizationResource::class;
-
 
     protected function getHeaderWidgets(): array
     {
@@ -20,10 +18,10 @@ class ListOrganizations extends ListRecords
 
         ];
     }
-    public function getHeaderWidgetsColumns(): int    {
+    public function getHeaderWidgetsColumns(): int
+    {
         return 3;  // Definindo 3 colunas para os widgets
     }
-
 
     protected function getHeaderActions(): array
     {

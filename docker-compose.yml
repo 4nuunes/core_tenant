@@ -1,3 +1,17 @@
+networks:
+  tenant:
+    driver: bridge
+
+volumes:
+  mysql-data:
+    name: mysql-data
+    driver: local
+  postgres_data_evolution:
+    name: postgres_data_evolution
+    driver: local
+  evolution_instances_data:
+    driver: local
+
 services:
   app:
     build:
@@ -83,19 +97,47 @@ services:
     networks:
       - tenant
 
-  stripe:
-    image: "stripe/stripe-cli:latest"
+  evolution:
+    container_name: evolution-api
+    image: atendai/evolution-api:v2.2.2
+    build:
+      context: .
+      dockerfile: Dockerfile.evolution
+    restart: always
+    env_file:
+      - .env
     environment:
-        STRIPE_SECRET: ${STRIPE_SECRET}
-        STRIPE_DEVICE_NAME: ${STRIPE_DEVICE_NAME}
-    command:
-        stripe listen --forward-to http://172.17.0.1/stripe/webhook
+      DATABASE_PROVIDER: postgresql
+      DATABASE_CONNECTION: pgsql
+      DATABASE_CONNECTION_URI: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres-db-evolution:${POSTGRES_PORT}/evolution
+    ports:
+      - "8080:8080"
     networks:
       - tenant
+    volumes:
+      - evolution_instances_data:/evolution/instances
 
-volumes:
-  mysql-data:
-
-networks:
-  tenant:
-    driver: bridge
+  postgres:
+    container_name: postgres-db-evolution
+    build:
+      context: .
+      dockerfile: Dockerfile.postgresSql
+    restart: unless-stopped
+    environment:
+      PGDATA: /var/lib/postgresql/data
+      LANG: C.UTF-8
+    env_file:
+      - .env
+    ports:
+      - "5432:5432"
+    networks:
+      - tenant
+    volumes:
+      - ./docker/postgres/postgresql.conf:/etc/postgresql/postgresql.conf
+      - postgres_data_evolution:/var/lib/postgresql/data
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5

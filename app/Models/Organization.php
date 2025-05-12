@@ -2,14 +2,10 @@
 
 namespace App\Models;
 
-use Laravel\Cashier\Billable;
-use Illuminate\Database\Eloquent\Model;
-use App\Enums\Stripe\SubscriptionStatusEnum;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Filament\Models\Contracts\HasCurrentTenantLabel;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\{BelongsToMany, HasMany};
+use Laravel\Cashier\Billable;
 
 class Organization extends Model
 {
@@ -30,14 +26,13 @@ class Organization extends Model
         'card_country',
     ];
 
-
-     /**
-     * @return BelongsToMany<User, $this>
-     */
+    /**
+    * @return BelongsToMany<User, $this>
+    */
 
     public function members(): BelongsToMany
     {
-        return $this->belongsToMany(User::class , 'organization_user', 'organization_id', 'user_id');
+        return $this->belongsToMany(User::class, 'organization_user', 'organization_id', 'user_id');
     }
 
     public function users(): BelongsToMany
@@ -60,5 +55,9 @@ class Organization extends Model
         return $this->hasMany(SubscriptionRefund::class);
     }
 
+    public function whatsappInstances(): HasMany
+    {
+        return $this->hasMany(WhatsappInstance::class);
+    }
 
 }

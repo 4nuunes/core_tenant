@@ -2,42 +2,37 @@
 
 namespace App\Filament\App\Resources;
 
-use Carbon\Carbon;
-use Filament\Forms;
-use Filament\Tables;
-use App\Models\Ticket;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Filament\Resources\Resource;
-use Filament\Tables\Grouping\Group;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Fieldset;
-use Filament\Tables\Columns\TextColumn;
-use Illuminate\Database\Eloquent\Model;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\RichEditor;
-use Illuminate\Database\Eloquent\Builder;
-use App\Enums\TenantSuport\TicketTypeEnum;
-use Filament\Tables\Filters\TrashedFilter;
-use App\Enums\TenantSuport\TicketPriorityEnum;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\App\Resources\TicketResource\Pages;
-use App\Filament\App\Resources\TicketResource\RelationManagers;
+use App\Enums\TenantSuport\{TicketPriorityEnum, TicketTypeEnum};
 use App\Filament\App\Resources\TicketResource\RelationManagers\TicketResponsesRelationManager;
+use App\Filament\App\Resources\TicketResource\{Pages};
+use App\Models\Ticket;
+use Carbon\Carbon;
+use Filament\Forms\Components\{Fieldset, FileUpload, RichEditor, Select, TextInput};
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Grouping\Group;
+use Filament\Tables\Table;
+use Filament\{Tables};
+use Illuminate\Database\Eloquent\{Model};
 
 class TicketResource extends Resource
 {
     protected static ?string $model = Ticket::class;
 
     protected static ?string $navigationIcon = 'fas-bullhorn';
-    protected static ?string $navigationGroup = 'Suporte';
-    protected static ?string $navigationLabel = 'Solicitações';
-    protected static ?string $modelLabel = 'Ticket';
-    protected static ?string $modelLabelPlural = "Tickets";
-    protected static ?int $navigationSort = 1;
-    protected static bool $isScopedToTenant = true;
 
+    protected static ?string $navigationGroup = 'Suporte';
+
+    protected static ?string $navigationLabel = 'Solicitações';
+
+    protected static ?string $modelLabel = 'Ticket';
+
+    protected static ?string $modelLabelPlural = "Tickets";
+
+    protected static ?int $navigationSort = 1;
+
+    protected static bool $isScopedToTenant = true;
 
     public static function form(Form $form): Form
     {
@@ -63,11 +58,10 @@ class TicketResource extends Resource
                             ->required(),
                     ])->columns(3),
 
-
                 Fieldset::make('Detalhes do Ticket')
                     ->schema([
                         RichEditor::make('description')
-                            ->label('Detalhamento')  
+                            ->label('Detalhamento')
                             ->required()
                             ->columnSpanFull(),
                     ]),
@@ -82,7 +76,7 @@ class TicketResource extends Resource
                             ->label('Imagens')
                             ->image()
                             ->imageEditor(),
-                           
+
                     ])->columns(2),
             ]);
     }
@@ -103,7 +97,7 @@ class TicketResource extends Resource
 
                 TextColumn::make('title')
                     ->label('Assunto')
-                    ->searchable(),    
+                    ->searchable(),
 
                 TextColumn::make('status')
                     ->label('Status')
@@ -121,18 +115,18 @@ class TicketResource extends Resource
                     ->label('Tipo')
                     ->alignCenter()
                     ->badge()
-                    ->sortable(),                
+                    ->sortable(),
 
                 TextColumn::make('lifetime')
                     ->label('Tempo de Vida')
                     ->getStateUsing(function (Model $record) {
-                            $createdAt = Carbon::parse($record->created_at);
-                            $closedAt = $record->closed_at ? Carbon::parse($record->closed_at) : now();
-                            $diff = $createdAt->diff($closedAt);
-            
-                            return "{$diff->d} dias, {$diff->h} horas";
+                        $createdAt = Carbon::parse($record->created_at);
+                        $closedAt  = $record->closed_at ? Carbon::parse($record->closed_at) : now();
+                        $diff      = $createdAt->diff($closedAt);
 
-                        })
+                        return "{$diff->d} dias, {$diff->h} horas";
+
+                    })
                     ->alignCenter()
                     ->sortable(),
 
@@ -180,10 +174,10 @@ class TicketResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListTickets::route('/'),
+            'index'  => Pages\ListTickets::route('/'),
             'create' => Pages\CreateTicket::route('/create'),
-            'view' => Pages\ViewTicket::route('/{record}'),
-            'edit' => Pages\EditTicket::route('/{record}/edit'),
+            'view'   => Pages\ViewTicket::route('/{record}'),
+            'edit'   => Pages\EditTicket::route('/{record}/edit'),
         ];
     }
 }

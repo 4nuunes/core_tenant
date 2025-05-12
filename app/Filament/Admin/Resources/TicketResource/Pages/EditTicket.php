@@ -2,13 +2,12 @@
 
 namespace App\Filament\Admin\Resources\TicketResource\Pages;
 
-use App\Models\User;
+use App\Filament\Admin\Resources\TicketResource;
+use App\Models\{Ticket};
 use Filament\Actions;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
-use App\Filament\Admin\Resources\TicketResource;
-use App\Models\Ticket;
 
 class EditTicket extends EditRecord
 {

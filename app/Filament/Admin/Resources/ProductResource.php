@@ -2,41 +2,35 @@
 
 namespace App\Filament\Admin\Resources;
 
-use Filament\Forms;
-use Filament\Tables;
+use App\Filament\Admin\Resources\ProductResource\RelationManagers\{PricesRelationManager, ProductfeaturesRelationManager};
+use App\Filament\Admin\Resources\ProductResource\{Pages};
 use App\Models\Product;
-use Filament\Forms\Form;
-use Stripe\StripeClient;
-use Filament\Tables\Table;
-use Illuminate\Support\Env;
-use Filament\Resources\Resource;
-use Filament\Tables\Actions\Action;
-use Filament\Forms\Components\Fieldset;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
-use Filament\Forms\Components\FileUpload;
-use Filament\Tables\Columns\ToggleColumn;
-
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Admin\Resources\ProductResource\Pages;
 use App\Services\Stripe\Product\DeleteStripeProductService;
-use App\Filament\Admin\Resources\ProductResource\RelationManagers;
-use App\Filament\Admin\Resources\ProductResource\RelationManagers\PricesRelationManager;
-use App\Filament\Admin\Resources\ProductResource\RelationManagers\ProductfeaturesRelationManager;
+use Filament\Forms\Components\{Fieldset, FileUpload, TextInput};
+use Filament\Forms\Form;
+use Filament\Notifications\Notification;
+use Filament\Resources\Resource;
+use Filament\Tables\Actions\{Action, ActionGroup, DeleteAction, EditAction, ViewAction};
+use Filament\Tables\Columns\{TextColumn, ToggleColumn};
 
+use Filament\Tables\Table;
 
 class ProductResource extends Resource
 {
     protected static ?string $model = Product::class;
 
     protected static ?string $navigationIcon = 'fas-hand-holding-dollar';
+
     protected static ?string $navigationGroup = 'Planos';
+
     protected static ?string $navigationLabel = 'Planos';
+
     protected static ?string $modelLabel = 'Plano';
+
     protected static ?string $modelLabelPlural = "Planos";
+
     protected static ?int $navigationSort = 1;
+
     protected static bool $isScopedToTenant = false;
 
     public static function form(Form $form): Form
@@ -49,27 +43,27 @@ class ProductResource extends Resource
                         TextInput::make('stripe_id')
                             ->label('Id Plano Stripe')
                             ->readOnly(),
-                    ]),
 
-                Fieldset::make('Label')
-                    ->schema([
                         TextInput::make('name')
                             ->label('Nome do Plano')
                             ->required()
                             ->maxLength(255),
+
                         TextInput::make('description')
                             ->label('Descrição do Plano')
                             ->required()
                             ->maxLength(255),
-                    ])->columns(2),
 
-                    Fieldset::make('Imagem do Plano')
-                    ->schema([
-                        FileUpload::make('image')
-                            ->label('Imagem do Plano')
-                            ->image()
-                            ->imageEditor(),
-                    ]),
+                    ])->columns(3),
+
+                Fieldset::make('Imagem do Plano')
+                ->schema([
+                    FileUpload::make('image')
+                        ->label('Imagem do Plano')
+                        ->image()
+                        ->imageEditor()
+                        ->columnSpanFull(),
+                ]),
             ]);
     }
 
@@ -119,28 +113,36 @@ class ProductResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make()
-                ->action(function (Action $action, $record) {
-                    try {
-                        $deleteStripeProductService = new DeleteStripeProductService();
-                        $deleteStripeProductService->execute($record);
+                ActionGroup::make([
+                    ViewAction::make()
+                        ->color('primary'),
+                    EditAction::make()
+                        ->color('secondary'),
+                    DeleteAction::make() ->action(function (Action $action, $record) {
+                        try {
+                            $deleteStripeProductService = new DeleteStripeProductService();
+                            $deleteStripeProductService->execute($record);
 
-                        Notification::make()
-                            ->title('Produto Excluído')
-                            ->body('Produto excluído com sucesso!')
-                            ->success()
-                            ->send();
+                            Notification::make()
+                                ->title('Produto Excluído')
+                                ->body('Produto excluído com sucesso!')
+                                ->success()
+                                ->send();
 
-                    } catch (\Exception $e) {
-                        Notification::make()
-                            ->title('Erro ao Excluir')
-                            ->body($e->getMessage())
-                            ->danger()
-                            ->send();
-                    }
-                })
+                        } catch (\Exception $e) {
+                            Notification::make()
+                                ->title('Erro ao Excluir')
+                                ->body($e->getMessage())
+                                ->danger()
+                                ->send();
+                        }
+                    }),
+                ])
+                ->icon('fas-sliders')
+                ->color('warning'),
+
             ])
+
             ->bulkActions([
 
             ]);
@@ -157,9 +159,9 @@ class ProductResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListProducts::route('/'),
+            'index'  => Pages\ListProducts::route('/'),
             'create' => Pages\CreateProduct::route('/create'),
-            'edit' => Pages\EditProduct::route('/{record}/edit'),
+            'edit'   => Pages\EditProduct::route('/{record}/edit'),
         ];
     }
 

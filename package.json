@@ -1,4 +1,5 @@
 {
+    "name": "@wallacemartinss/core_tenant",
     "private": true,
     "type": "module",
     "scripts": {

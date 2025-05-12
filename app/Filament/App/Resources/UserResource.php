@@ -2,37 +2,35 @@
 
 namespace App\Filament\App\Resources;
 
-use Filament\Forms;
+use App\Filament\App\Resources\UserResource\{Pages};
 use App\Models\User;
-use Filament\Tables;
+use Filament\Forms\Components\{Section, TextInput};
 use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Forms\Components\Button;
-use Filament\Resources\Resource;
-use Filament\Forms\Components\Section;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
-use Filament\Tables\Columns\ImageColumn;
-use Filament\Tables\Columns\ToggleColumn;
-use Illuminate\Database\Eloquent\Builder;
-use App\Filament\App\Resources\UserResource\Pages;
-use Leandrocfe\FilamentPtbrFormFields\PhoneNumber;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\App\Resources\UserResource\RelationManagers;
 use Filament\Notifications\Notification;
+use Filament\Resources\Resource;
+use Filament\Tables\Actions\{ActionGroup, DeleteAction, EditAction, ViewAction};
+use Filament\Tables\Columns\{ImageColumn, TextColumn, ToggleColumn};
+use Filament\Tables\Table;
+use Filament\{Tables};
+use Leandrocfe\FilamentPtbrFormFields\PhoneNumber;
 
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
     protected static ?string $navigationIcon = 'fas-user-plus';
-    protected static ?string $navigationGroup = 'Administração';
-    protected static ?string $navigationLabel = 'Meus Usuários';
-    protected static ?string $modelLabel = 'Usuário';
-    protected static ?string $modelLabelPlural = "Usuários";
-    protected static ?int $navigationSort = 2;
-    protected static bool $isScopedToTenant = true;
 
+    protected static ?string $navigationGroup = 'Administração';
+
+    protected static ?string $navigationLabel = 'Meus Usuários';
+
+    protected static ?string $modelLabel = 'Usuário';
+
+    protected static ?string $modelLabelPlural = "Usuários";
+
+    protected static ?int $navigationSort = 2;
+
+    protected static bool $isScopedToTenant = true;
 
     public static function form(Form $form): Form
     {
@@ -70,17 +68,19 @@ class UserResource extends Resource
         return $table
             ->columns([
                 ImageColumn::make('avatar_url')
-                    ->label('Foto')
+                    ->label('Avatar')
                     ->circular()
                     ->getStateUsing(function ($record) {
                         return $record->getFilamentAvatarUrl();
                     })
                     ->alignCenter(),
                 Tables\Columns\TextColumn::make('name')
+                    ->label('Nome')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
                     ->searchable(),
                 TextColumn::make('phone')
+                    ->label('Telefone')
                     ->searchable(),
 
                 ToggleColumn::make('is_active')
@@ -89,13 +89,14 @@ class UserResource extends Resource
                     ->alignCenter()
                     ->beforeStateUpdated(function ($record, $state) {
                         $record->update(['is_active' => $state]);
-                        if($state === true) {
+
+                        if ($state === true) {
                             Notification::make()
                             ->title('Acesso Liberado')
                             ->body("O Acesso do Usuário {$record->name} foi liberado")
                             ->success()
                             ->send();
-                        }else{
+                        } else {
                             Notification::make()
                             ->title('Acesso Desativado')
                             ->body("O Acesso do Usuário {$record->name} foi Desativado")
@@ -109,10 +110,12 @@ class UserResource extends Resource
                     ->alignCenter()
                     ->boolean(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Criado em')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Atualizado em')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -121,10 +124,15 @@ class UserResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
-
+                ActionGroup::make([
+                    ViewAction::make()
+                        ->color('primary'),
+                    EditAction::make()
+                        ->color('secondary'),
+                    DeleteAction::make(),
+                ])
+                ->icon('fas-sliders')
+                ->color('warning'),
 
             ])
             ->bulkActions([
@@ -144,10 +152,10 @@ class UserResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListUsers::route('/'),
+            'index'  => Pages\ListUsers::route('/'),
             'create' => Pages\CreateUser::route('/create'),
-            'view' => Pages\ViewUser::route('/{record}'),
-            'edit' => Pages\EditUser::route('/{record}/edit'),
+            'view'   => Pages\ViewUser::route('/{record}'),
+            'edit'   => Pages\EditUser::route('/{record}/edit'),
         ];
     }
 }

@@ -2,44 +2,36 @@
 
 namespace App\Models;
 
-
-use Illuminate\Database\Eloquent\Model;
-use App\Enums\TenantSuport\TicketTypeEnum;
-
-use Illuminate\Testing\Fluent\Concerns\Has;
-use App\Enums\TenantSuport\TicketStatusEnum;
-use App\Enums\TenantSuport\TicketPriorityEnum;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Enums\TenantSuport\{TicketPriorityEnum, TicketStatusEnum, TicketTypeEnum};
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\{BelongsTo};
 
 class Ticket extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-                'organization_id',
-                'user_id',
-                'title',
-                'description',
-                'file',
-                'image_path',
-                'priority',
-                'status',
-                'type',
-                'closed_at'
-            ];
+        'organization_id',
+        'user_id',
+        'title',
+        'description',
+        'file',
+        'image_path',
+        'priority',
+        'status',
+        'type',
+        'closed_at',
+    ];
 
     protected $casts = [
 
-        'type' => TicketTypeEnum::class,
-        'priority' => TicketPriorityEnum::class,
-        'status' => TicketStatusEnum::class,
-        'file' => 'array',
+        'type'       => TicketTypeEnum::class,
+        'priority'   => TicketPriorityEnum::class,
+        'status'     => TicketStatusEnum::class,
+        'file'       => 'array',
         'created_at' => 'datetime',
-        'closed_at' => 'datetime',
-
+        'closed_at'  => 'datetime',
 
     ];
 

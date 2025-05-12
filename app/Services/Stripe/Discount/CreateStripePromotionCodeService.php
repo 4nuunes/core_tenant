@@ -2,10 +2,9 @@
 
 namespace App\Services\Stripe\Discount;
 
-use Exception;
-
 use App\Services\Traits\StripeClientTrait;
 
+use Exception;
 
 class CreateStripePromotionCodeService
 {
@@ -27,8 +26,6 @@ class CreateStripePromotionCodeService
             // Verifica se o cupom já existe, caso contrário, cria um novo
 
             return $data; // Retorna os dados atualizados
-
-
 
         } catch (Exception $e) {
             throw new Exception('Falha ao criar código promocional no Stripe: ' . $e->getMessage());

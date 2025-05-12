@@ -2,13 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use App\Enums\Stripe\Refunds\RefundStatusEnum;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use App\Enums\Stripe\Refunds\ReasonRefundStatusEnum;
-use App\Enums\Stripe\Refunds\RefundSubscriptionEnum;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Enums\Stripe\Refunds\{ReasonRefundStatusEnum, RefundStatusEnum, RefundSubscriptionEnum};
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\{BelongsTo};
 
 class SubscriptionRefund extends Model
 {
@@ -30,12 +27,10 @@ class SubscriptionRefund extends Model
     ];
 
     protected $casts = [
-        'reason' => RefundSubscriptionEnum::class,
-        'status' => RefundStatusEnum::class,
+        'reason'         => RefundSubscriptionEnum::class,
+        'status'         => RefundStatusEnum::class,
         'failure_reason' => ReasonRefundStatusEnum::class,
     ];
-
-
 
     public function subscription(): BelongsTo
     {
@@ -49,9 +44,7 @@ class SubscriptionRefund extends Model
     }
 
     public function price()
-{
-    return $this->belongsTo(Price::class);  // Ajuste conforme o nome correto do seu modelo
+    {
+        return $this->belongsTo(Price::class);  // Ajuste conforme o nome correto do seu modelo
+    }
 }
-}
-
-

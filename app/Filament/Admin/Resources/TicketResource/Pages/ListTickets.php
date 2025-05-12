@@ -2,10 +2,10 @@
 
 namespace App\Filament\Admin\Resources\TicketResource\Pages;
 
-use Filament\Actions;
-use Filament\Resources\Pages\ListRecords;
 use App\Filament\Admin\Resources\TicketResource;
 use App\Filament\Admin\Resources\TicketResource\Widgets\StatsTicketsOverview;
+use Filament\Actions;
+use Filament\Resources\Pages\ListRecords;
 
 class ListTickets extends ListRecords
 {
@@ -17,7 +17,6 @@ class ListTickets extends ListRecords
             StatsTicketsOverview::class,
         ];
     }
-
 
     protected function getHeaderActions(): array
     {

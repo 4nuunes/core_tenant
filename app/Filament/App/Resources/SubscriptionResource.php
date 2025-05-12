@@ -2,47 +2,37 @@
 
 namespace App\Filament\App\Resources;
 
-use Carbon\Carbon;
-use Stripe\Stripe;
-use Filament\Forms;
-use Filament\Tables;
-use Filament\Forms\Form;
-use Stripe\StripeClient;
-use Filament\Tables\Table;
-use Illuminate\Support\Env;
-use App\Models\Subscription;
-use Filament\Resources\Resource;
-use Filament\Tables\Actions\Action;
-use Illuminate\Support\Facades\Log;
-use Filament\Forms\Components\Select;
-use Illuminate\Validation\Rules\Enum;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Textarea;
-use Filament\Tables\Columns\TextColumn;
-use App\Models\SubscriptionCancellation;
-use Filament\Notifications\Notification;
-use Filament\Tables\Actions\ActionGroup;
-use Illuminate\Database\Eloquent\Builder;
-use App\Enums\Stripe\CancelSubscriptionEnum;
-use App\Enums\Stripe\SubscriptionStatusEnum;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\App\Resources\SubscriptionResource\Pages;
+use App\Enums\Stripe\{CancelSubscriptionEnum, SubscriptionStatusEnum};
+use App\Filament\App\Resources\SubscriptionResource\{Pages};
+use App\Models\{Subscription};
 use App\Services\Stripe\Subscription\CancelSubscriptionService;
+use Carbon\Carbon;
+use Filament\Forms\Components\{Fieldset, Select, Textarea};
+use Filament\Forms\Form;
+use Filament\Notifications\Notification;
+use Filament\Resources\Resource;
+use Filament\Tables\Actions\{Action, ActionGroup};
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 use IbrahimBougaoua\FilamentRatingStar\Forms\Components\RatingStar;
-use App\Filament\App\Resources\SubscriptionResource\RelationManagers;
 
 class SubscriptionResource extends Resource
 {
     protected static ?string $model = Subscription::class;
 
     protected static ?string $navigationIcon = 'fas-hand-holding-dollar';
-    protected static ?string $navigationGroup = 'Administração';
-    protected static ?string $navigationLabel = 'Minhas Assinaturas';
-    protected static ?string $modelLabel = 'Minha Assinatura';
-    protected static ?string $modelLabelPlural = "Minhas Assinaturas";
-    protected static ?int $navigationSort = 1;
-    protected static bool $isScopedToTenant = true;
 
+    protected static ?string $navigationGroup = 'Administração';
+
+    protected static ?string $navigationLabel = 'Minhas Assinaturas';
+
+    protected static ?string $modelLabel = 'Minha Assinatura';
+
+    protected static ?string $modelLabelPlural = "Minhas Assinaturas";
+
+    protected static ?int $navigationSort = 1;
+
+    protected static bool $isScopedToTenant = true;
 
     public static function form(Form $form): Form
     {
@@ -57,8 +47,8 @@ class SubscriptionResource extends Resource
                 TextColumn::make('stripe_status')
                     ->label('Status')
                     ->badge()
-                    ->formatStateUsing(fn($state) => SubscriptionStatusEnum::from($state)->getLabel())
-                    ->color(fn($state) => SubscriptionStatusEnum::from($state)->getColor())
+                    ->formatStateUsing(fn ($state) => SubscriptionStatusEnum::from($state)->getLabel())
+                    ->color(fn ($state) => SubscriptionStatusEnum::from($state)->getColor())
                     ->alignCenter()
                     ->sortable()
                     ->searchable(),
@@ -116,14 +106,12 @@ class SubscriptionResource extends Resource
                         }
 
                         // Calcula a diferença total em dias e horas
-                        $remainingDays = $now->diffInDays($endsAt, false);
+                        $remainingDays  = $now->diffInDays($endsAt, false);
                         $remainingHours = $now->diffInHours($endsAt) % 24;
 
                         return sprintf('%d dias e %02d horas', $remainingDays, $remainingHours);
                     })
                     ->alignCenter(),
-
-
             ])
             ->filters([
                 //
@@ -163,6 +151,7 @@ class SubscriptionResource extends Resource
                         ->modalDescription(function ($record) {
                             // Usando Carbon para formatar a data ends_at
                             $endsAt = Carbon::parse($record->ends_at)->format('d/m/Y H:i'); // Formato desejado
+
                             return "Atenção!!! após o cancelamento você terá acesso a plataforma até: {$endsAt}, após essa data nenhuma cobrança será feita, seus acessos serão revogados e todos os dados serão apagados. Deseja continuar?";
                         })
                         ->slideOver()
@@ -172,6 +161,7 @@ class SubscriptionResource extends Resource
 
                                 $cancellationService = new CancelSubscriptionService();
                                 $cancellationService->cancel($record, $data);
+
                             } catch (\Exception $e) {
 
                                 Notification::make()
@@ -188,15 +178,15 @@ class SubscriptionResource extends Resource
                     Action::make('Baixar Invoice')
                         ->label('Baixar Invoice')
                         ->icon('heroicon-o-document-arrow-down')
-                        ->url(fn($record) => $record->invoice_pdf)
+                        ->url(fn ($record) => $record->invoice_pdf)
                         ->tooltip('Baixar PDF da Fatura')
                         ->color('primary'),
                 ])
+                ->icon('fas-sliders')
+                ->color('warning'),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+
             ]);
     }
 
@@ -211,9 +201,9 @@ class SubscriptionResource extends Resource
     {
         return [
             'index' => Pages\ListSubscriptions::route('/'),
-            'create' => Pages\CreateSubscription::route('/create'),
-            'view' => Pages\ViewSubscription::route('/{record}'),
-            'edit' => Pages\EditSubscription::route('/{record}/edit'),
+            //'create' => Pages\CreateSubscription::route('/create'),
+            //'view' => Pages\ViewSubscription::route('/{record}'),
+            //'edit'   => Pages\EditSubscription::route('/{record}/edit'),
         ];
     }
     public static function canCreate(): bool

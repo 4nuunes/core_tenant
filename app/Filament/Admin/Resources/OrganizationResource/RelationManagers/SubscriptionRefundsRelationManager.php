@@ -2,17 +2,20 @@
 
 namespace App\Filament\Admin\Resources\OrganizationResource\RelationManagers;
 
-use Filament\Tables;
 use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
 class SubscriptionRefundsRelationManager extends RelationManager
 {
     protected static string $relationship = 'subscription_refunds';
+
     protected static ?string $modelLabel = 'Reembolsos';
+
     protected static ?string $modelLabelPlural = "Reembolsos";
+
     protected static ?string $title = 'Reembolsos da Subscription';
 
     public function form(Form $form): Form
@@ -39,7 +42,7 @@ class SubscriptionRefundsRelationManager extends RelationManager
                     ->sortable()
                     ->searchable()
                     ->alignCenter()
-                    ->formatStateUsing(fn($state) => 'R$ ' . number_format($state / 100, 2, ',', '.')),
+                    ->formatStateUsing(fn ($state) => 'R$ ' . number_format($state / 100, 2, ',', '.')),
 
                 TextColumn::make('reason')
                     ->label('Motivo')
@@ -49,7 +52,7 @@ class SubscriptionRefundsRelationManager extends RelationManager
 
                 TextColumn::make('failure_reason')
                     ->label('Motivo')
-                    ->visible(fn($record) => $record && $record->failure_reason !== null)
+                    ->visible(fn ($record) => $record && $record->failure_reason !== null)
                     ->searchable(),
 
                 TextColumn::make('reference')

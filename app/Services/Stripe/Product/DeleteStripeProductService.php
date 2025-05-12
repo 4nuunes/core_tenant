@@ -2,22 +2,19 @@
 
 namespace App\Services\Stripe\Product;
 
-
-use Exception;
 use App\Models\Price;
-use Illuminate\Support\Facades\Log;
 use App\Services\Traits\StripeClientTrait;
+use Exception;
+use Illuminate\Support\Facades\Log;
 
 class DeleteStripeProductService
 {
     use StripeClientTrait;
 
-
     public function __construct()
     {
         $this->initializeStripeClient();
     }
-
 
     /**
      * @param object

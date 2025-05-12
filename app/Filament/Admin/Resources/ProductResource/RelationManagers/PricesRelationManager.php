@@ -2,30 +2,25 @@
 
 namespace App\Filament\Admin\Resources\ProductResource\RelationManagers;
 
-use Stripe\Price;
-use Stripe\Stripe;
-use Filament\Forms;
-use Filament\Tables;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Filament\Forms\Components\Select;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
-use App\Enums\Stripe\ProductCurrencyEnum;
-use App\Enums\Stripe\ProductIntervalEnum;
-use Filament\Tables\Columns\ToggleColumn;
-use Illuminate\Database\Eloquent\Builder;
-use Leandrocfe\FilamentPtbrFormFields\Money;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Enums\Stripe\{ProductCurrencyEnum, ProductIntervalEnum};
 use App\Services\Stripe\Price\CreateStripePriceService;
+use Filament\Forms\Components\{Select, TextInput};
+use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables\Columns\{TextColumn, ToggleColumn};
+use Filament\Tables\Table;
+use Filament\{Tables};
+use Leandrocfe\FilamentPtbrFormFields\Money;
 
 class PricesRelationManager extends RelationManager
 {
     protected static string $relationship = 'prices';
+
     protected static ?string $modelLabel = 'Preço';
+
     protected static ?string $modelLabelPlural = "Preço";
+
     protected static ?string $title = 'Valores dos Produtos';
 
     public function form(Form $form): Form
@@ -57,7 +52,6 @@ class PricesRelationManager extends RelationManager
 
             ]);
     }
-
 
     public function table(Table $table): Table
     {

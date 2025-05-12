@@ -2,12 +2,9 @@
 
 namespace App\Filament\Admin\Resources\ProductResource\Pages;
 
-use Filament\Actions;
-use Stripe\StripeClient;
-use Illuminate\Support\Env;
-use Filament\Resources\Pages\CreateRecord;
 use App\Filament\Admin\Resources\ProductResource;
 use App\Services\Stripe\Product\CreateStripeProductService;
+use Filament\Resources\Pages\CreateRecord;
 
 class CreateProduct extends CreateRecord
 {

@@ -1,0 +1,11 @@
+# Usa a imagem oficial do PostgreSQL
+FROM postgres:latest
+
+# Copia os scripts de inicialização para o container
+COPY ./docker/postgres/init /docker-entrypoint-initdb.d/
+
+# Garante que os scripts tenham permissão de execução
+RUN chmod -R 755 /docker-entrypoint-initdb.d/
+
+# Expondo a porta do PostgreSQL
+EXPOSE 5432

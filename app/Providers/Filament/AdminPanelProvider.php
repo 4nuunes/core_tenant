@@ -2,27 +2,20 @@
 
 namespace App\Providers\Filament;
 
-use Filament\Pages;
-use Filament\Panel;
-use Filament\Widgets;
-use Filament\PanelProvider;
+use App\Filament\Pages\Backup\Backup;
+use App\Http\Middleware\VerifyIsAdmin;
+use Croustibat\FilamentJobsMonitor\FilamentJobsMonitorPlugin;
+use Filament\Http\Middleware\{Authenticate, AuthenticateSession, DisableBladeIconComponents, DispatchServingFilamentEvent};
 use Filament\Navigation\MenuItem;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\MaxWidth;
-use App\Http\Middleware\VerifyIsAdmin;
-use Filament\Http\Middleware\Authenticate;
-use Illuminate\Session\Middleware\StartSession;
-use Illuminate\Cookie\Middleware\EncryptCookies;
-use Filament\Http\Middleware\AuthenticateSession;
-use Illuminate\Routing\Middleware\SubstituteBindings;
-use Illuminate\View\Middleware\ShareErrorsFromSession;
-use Filament\Http\Middleware\DisableBladeIconComponents;
-use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\{Pages, Panel, PanelProvider};
+use Illuminate\Cookie\Middleware\{AddQueuedCookiesToResponse, EncryptCookies};
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
-use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
-use Croustibat\FilamentJobsMonitor\FilamentJobsMonitorPlugin;
-use ShuvroRoy\FilamentSpatieLaravelBackup\FilamentSpatieLaravelBackupPlugin;
-use App\Filament\Pages\Backup\Backup; // Ensure this class exists in the specified namespace
+use Illuminate\Routing\Middleware\SubstituteBindings;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
+use ShuvroRoy\FilamentSpatieLaravelBackup\FilamentSpatieLaravelBackupPlugin; // Ensure this class exists in the specified namespace
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -40,13 +33,13 @@ class AdminPanelProvider extends PanelProvider
                 MenuItem::make()
                     ->label('Aplicativo')
                     ->icon('heroicon-o-cog-6-tooth')
-                    ->url('/app')
+                    ->url('/app'),
             ])
             ->font('Inter')
             ->colors([
-                'danger' => Color::Rose,
-                'gray' => Color::Gray,
-                'info' => Color::Blue,
+                'danger'  => Color::Rose,
+                'gray'    => Color::Gray,
+                'info'    => Color::Blue,
                 'primary' => Color::Indigo,
                 'success' => Color::Emerald,
                 'warning' => Color::Orange,
@@ -92,6 +85,6 @@ class AdminPanelProvider extends PanelProvider
                     ->usingQueue('default') // default value is null
                     ->timeout(120) // default value is 120s
                     */
-                ]);
+            ]);
     }
 }

@@ -3,23 +3,22 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Filament\Models\Contracts\{FilamentUser, HasAvatar, HasTenants};
 use Filament\Panel;
-use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Storage;
-use Filament\Models\Contracts\HasAvatar;
-use Illuminate\Notifications\Notifiable;
-use Filament\Models\Contracts\HasTenants;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Storage;
 
 class User extends Authenticatable implements FilamentUser, HasTenants, HasAvatar, MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory;
+    use Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -57,30 +56,29 @@ class User extends Authenticatable implements FilamentUser, HasTenants, HasAvata
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-            'settings' => 'array',
-            'is_active' => 'boolean',
-            'is_tenant_admin' => 'boolean',
+            'password'          => 'hashed',
+            'settings'          => 'array',
+            'is_active'         => 'boolean',
+            'is_tenant_admin'   => 'boolean',
         ];
     }
-/**
-     * @return BelongsToMany<Organizations, $this>
-     */
+    /**
+         * @return BelongsToMany<Organizations, $this>
+         */
 
+    public function organizations(): BelongsToMany
+    {
+        return $this->belongsToMany(Organization::class, 'organization_user');
+    }
+    public function getTenants(Panel $panel): Collection
+    {
+        return $this->organizations;
+    }
 
-     public function organizations(): BelongsToMany
-     {
-         return $this->belongsToMany(Organization::class);
-     }
-     public function getTenants(Panel $panel): Collection
-     {
-         return $this->organizations;
-     }
-
-     public function canAccessTenant(Model $organization): bool
-     {
-         return $this->organizations()->whereKey($organization)->exists();
-     }
+    public function canAccessTenant(Model $organization): bool
+    {
+        return $this->organizations()->whereKey($organization)->exists();
+    }
     public function canAccessPanel(Panel $panel): bool
     {
         return true;
@@ -94,10 +92,8 @@ class User extends Authenticatable implements FilamentUser, HasTenants, HasAvata
     }
 
     public function organization(): BelongsToMany
-     {
-         return $this->belongsToMany(Organization::class);
-     }
-
-
+    {
+        return $this->belongsToMany(Organization::class);
+    }
 
 }

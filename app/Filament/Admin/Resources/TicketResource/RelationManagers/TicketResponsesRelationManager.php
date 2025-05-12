@@ -2,27 +2,21 @@
 
 namespace App\Filament\Admin\Resources\TicketResource\RelationManagers;
 
-
+use Filament\Forms\Components\{Fieldset, FileUpload, Textarea};
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables\Table;
-use Filament\Forms;
-use Filament\Tables;
-use Faker\Provider\ar_EG\Text;
-use Illuminate\Support\Facades\Auth;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\RichEditor;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Tables\Table;
+use Filament\{Tables};
 
 class TicketResponsesRelationManager extends RelationManager
 {
     protected static string $relationship = 'ticketresponses';
+
     protected static ?string $modelLabel = 'Tratativa';
+
     protected static ?string $modelLabelPlural = "Tratativas";
+
     protected static ?string $title = 'Tratativa do Ticket';
 
     public function form(Form $form): Form
@@ -61,17 +55,17 @@ class TicketResponsesRelationManager extends RelationManager
 
                 TextColumn::make('created_at')
                     ->label('Criado em')
-                    ->dateTime( 'd/m/Y H:m:s'),
+                    ->dateTime('d/m/Y H:m:s'),
 
                 TextColumn::make('updated_at')
                     ->label('Atualizado em')
-                    ->dateTime( 'd/m/Y H:m:s'),
+                    ->dateTime('d/m/Y H:m:s'),
             ])
             ->filters([
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make()
+                Tables\Actions\CreateAction::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

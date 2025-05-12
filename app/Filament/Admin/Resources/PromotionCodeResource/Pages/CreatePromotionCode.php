@@ -2,10 +2,9 @@
 
 namespace App\Filament\Admin\Resources\PromotionCodeResource\Pages;
 
-use Filament\Actions;
-use Filament\Resources\Pages\CreateRecord;
 use App\Filament\Admin\Resources\PromotionCodeResource;
 use App\Services\Stripe\Discount\CreateStripePromotionCodeService;
+use Filament\Resources\Pages\CreateRecord;
 
 class CreatePromotionCode extends CreateRecord
 {
@@ -22,7 +21,7 @@ class CreatePromotionCode extends CreateRecord
 
         } catch (\Exception $e) {
 
-             throw new \Exception('Erro ao criar código promocional: ' . $e->getMessage());
+            throw new \Exception('Erro ao criar código promocional: ' . $e->getMessage());
         }
     }
 }

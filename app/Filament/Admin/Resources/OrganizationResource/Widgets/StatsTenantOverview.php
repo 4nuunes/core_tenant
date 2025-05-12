@@ -2,17 +2,13 @@
 
 namespace App\Filament\Admin\Resources\OrganizationResource\Widgets;
 
-use App\Models\Price;
-use App\Models\Organization;
-use App\Models\Subscription;
-use Illuminate\Database\Eloquent\Model;
-use Filament\Widgets\StatsOverviewWidget\Stat;
+use App\Models\{Organization, Price, Subscription};
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
+use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class StatsTenantOverview extends BaseWidget
 {
-
-     protected static bool $isLazy = true;
+    protected static bool $isLazy = true;
 
     protected function getStats(): array
     {
@@ -30,7 +26,9 @@ class StatsTenantOverview extends BaseWidget
                 ->chart([7, 3, 4, 5, 6, 3, 5, 3]),
 
             Stat::make(
-                    'Tenants Cancelados', Subscription::where('stripe_status', 'canceled')->count())
+                'Tenants Cancelados',
+                Subscription::where('stripe_status', 'canceled')->count()
+            )
                     ->description('Cancelados até agora')
                     ->descriptionIcon('heroicon-s-exclamation-circle')
                     ->color('danger')
@@ -42,11 +40,7 @@ class StatsTenantOverview extends BaseWidget
                 ->descriptionIcon('heroicon-s-currency-dollar')
                 ->chart([7, 3, 4, 5, 6, 3, 5, 5]),
 
-
-
-            ];
-        }
-
-
+        ];
+    }
 
 }

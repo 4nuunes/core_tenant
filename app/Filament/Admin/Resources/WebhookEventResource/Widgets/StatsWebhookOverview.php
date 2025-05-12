@@ -2,15 +2,13 @@
 
 namespace App\Filament\Admin\Resources\WebhookEventResource\Widgets;
 
-
 use App\Models\WebhookEvent;
-use Filament\Widgets\StatsOverviewWidget\Stat;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
+use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class StatsWebhookOverview extends BaseWidget
 {
-
-     protected static bool $isLazy = true;
+    protected static bool $isLazy = true;
 
     protected function getStats(): array
     {
@@ -33,15 +31,13 @@ class StatsWebhookOverview extends BaseWidget
                 ->color('success')
                 ->chart([7, 3, 4, 5, 6, 3, 5, 3]),
 
-            Stat::make('Média de Falhas',number_format($failureRate, 2) .' %')
+            Stat::make('Média de Falhas', number_format($failureRate, 2) . ' %')
                 ->description('Falhas / Sucesso')
                 ->color('warning')
                 ->descriptionIcon('heroicon-s-exclamation-triangle')
                 ->chart([3, 2, 1, 4, 2, 1, 3, 2]),
 
-            ];
-        }
-
-
+        ];
+    }
 
 }

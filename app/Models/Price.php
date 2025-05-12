@@ -2,11 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use App\Enums\Stripe\ProductCurrencyEnum;
-use App\Enums\Stripe\ProductIntervalEnum;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Enums\Stripe\{ProductCurrencyEnum, ProductIntervalEnum};
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Price extends Model
 {

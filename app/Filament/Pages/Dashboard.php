@@ -1,12 +1,11 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace App\Filament\Pages;
 
+use App\Filament\Actions\{SubscribePlanAction};
 use Filament\Actions\Action;
-use App\Filament\Actions\SubscribeAction;
-use App\Filament\Actions\SubscribePlanAction;
 use Filament\Pages\Dashboard as BaseDashboard;
 
 class Dashboard extends BaseDashboard
@@ -20,5 +19,5 @@ class Dashboard extends BaseDashboard
             ->modalDescription(__('Selecione o Plano que deseja adquirir!'))
             ->modalWidth('2xl')
             ->extraAttributes(['class' => 'max-h-[100vh] overflow-y-auto']);
-        }
+    }
 }

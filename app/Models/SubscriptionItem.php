@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class SubscriptionItem extends Model
 {
@@ -16,5 +16,4 @@ class SubscriptionItem extends Model
         'stripe_price',
         'quantity',
     ];
-
 }

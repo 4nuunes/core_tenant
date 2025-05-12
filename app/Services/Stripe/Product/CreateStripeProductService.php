@@ -2,9 +2,8 @@
 
 namespace App\Services\Stripe\Product;
 
-
-use Illuminate\Support\Facades\Log;
 use App\Services\Traits\StripeClientTrait;
+use Illuminate\Support\Facades\Log;
 
 class CreateStripeProductService
 {
@@ -19,7 +18,7 @@ class CreateStripeProductService
     {
         try {
             $stripeProduct = $this->stripe->products->create([
-                'name' => $name,
+                'name'        => $name,
                 'description' => $description,
             ]);
 

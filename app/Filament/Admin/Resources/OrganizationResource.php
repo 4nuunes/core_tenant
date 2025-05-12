@@ -2,47 +2,40 @@
 
 namespace App\Filament\Admin\Resources;
 
+use App\Enums\Stripe\{ProductIntervalEnum, SubscriptionStatusEnum};
+use App\Filament\Admin\Resources\OrganizationResource\Pages;
+use App\Filament\Admin\Resources\OrganizationResource\RelationManagers\{SubscriptionRefundsRelationManager, SubscriptionRelationManager, UserRelationManager, WhatsappInstanceRelationManager};
+use App\Models\{Organization, Price};
+use Filament\Forms\Components\{Fieldset, Grid, TextInput};
+use Filament\Forms\{Form, Set};
+use Filament\Resources\Resource;
 use Filament\Tables;
-use App\Models\Price;
-use Filament\Forms\Set;
-use Filament\Forms\Form;
+use Filament\Tables\Actions\{ActionGroup, DeleteAction, EditAction, ViewAction};
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
-use App\Models\Organization;
-use Filament\Resources\Resource;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Fieldset;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ViewAction;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
-use Filament\Tables\Actions\ActionGroup;
-use App\Enums\Stripe\ProductIntervalEnum;
-use Filament\Tables\Actions\DeleteAction;
-use App\Enums\Stripe\SubscriptionStatusEnum;
-use Leandrocfe\FilamentPtbrFormFields\Document;
-use Leandrocfe\FilamentPtbrFormFields\PhoneNumber;
-use App\Filament\Admin\Resources\OrganizationResource\Pages;
-use App\Filament\Admin\Resources\OrganizationResource\Widgets\RevenueWidget;
-use App\Filament\Admin\Resources\OrganizationResource\RelationManagers\UserRelationManager;
-use App\Filament\Admin\Resources\OrganizationResource\RelationManagers\SubscriptionRelationManager;
-use App\Filament\Admin\Resources\OrganizationResource\RelationManagers\SubscriptionRefundsRelationManager;
+use Leandrocfe\FilamentPtbrFormFields\{Document, PhoneNumber};
 
 class OrganizationResource extends Resource
 {
     protected static ?string $model = Organization::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-building-office-2';
+
     protected static ?string $navigationGroup = 'Administração';
+
     protected static ?string $navigationLabel = 'Tenant';
+
     protected static ?string $modelLabel = 'Tenant';
+
     protected static ?string $modelLabelPlural = "Tenants";
+
     protected static ?int $navigationSort = 1;
 
     public function getHeaderWidgetsColumns(): int
-{
-    return 3;  // Definindo 3 colunas para os widgets
-}
+    {
+        return 3;  // Definindo 3 colunas para os widgets
+    }
 
     public static function form(Form $form): Form
     {
@@ -140,9 +133,10 @@ class OrganizationResource extends Resource
 
                 TextColumn::make('latest_subscription_stripe_status')
                     ->label('Status Subscription')
-                    ->getStateUsing(fn($record) => $record->subscriptions()->latest('stripe_status')->first()?->stripe_status)
+                    ->getStateUsing(fn ($record) => $record->subscriptions()->latest('stripe_status')->first()?->stripe_status)
                     ->getStateUsing(function ($record) {
                         $status = $record->subscriptions()->latest('stripe_status')->first()?->stripe_status;
+
                         return $status ?? 'Admin Tenant';
                     })
                     ->formatStateUsing(function ($state) {
@@ -165,29 +159,36 @@ class OrganizationResource extends Resource
                     ->label('Plano Contratado')
                     ->getStateUsing(function ($record) {
                         $subscription = $record->subscriptions()->latest()->first();
+
                         if ($subscription) {
                             $stripePrice = $subscription->stripe_price;
-                            $price = Price::where('stripe_price_id', $stripePrice)->latest()->first();
+                            $price       = Price::where('stripe_price_id', $stripePrice)->latest()->first();
+
                             return  $price->interval ?? 'N/A';
                         }
+
                         return 'N/A';
                     })
                     ->formatStateUsing(function ($state) {
                         if ($state === 'N/A') {
                             return $state;
                         }
+
                         if ($state instanceof ProductIntervalEnum) {
                             return $state->getLabel();
                         }
+
                         return ProductIntervalEnum::tryFrom($state)?->getLabel() ?? 'Desconhecido';
                     })
                     ->color(function ($state) {
                         if ($state === 'N/A') {
                             return 'info';
                         }
+
                         if ($state instanceof ProductIntervalEnum) {
                             return $state->getColor();
                         }
+
                         return ProductIntervalEnum::tryFrom($state)?->getColor() ?? 'secondary';
                     })
                     ->badge()
@@ -197,11 +198,14 @@ class OrganizationResource extends Resource
                     ->label('Valor do Plano')
                     ->getStateUsing(function ($record) {
                         $subscription = $record->subscriptions()->latest()->first();
+
                         if ($subscription) {
                             $stripePrice = $subscription->stripe_price;
-                            $price = Price::where('stripe_price_id', $stripePrice)->latest()->first();
+                            $price       = Price::where('stripe_price_id', $stripePrice)->latest()->first();
+
                             return $price ? $price->unit_amount : 'Preço não encontrado';
                         }
+
                         return 'N/A';
                     })
                     ->money('brl')
@@ -215,12 +219,14 @@ class OrganizationResource extends Resource
                         if (is_null($trialEndsAt)) {
                             return 'N/A';
                         }
+
                         return now()->greaterThan($trialEndsAt) ? 'Período expirado' : $trialEndsAt;
                     })
                     ->formatStateUsing(function ($state) {
                         if ($state === 'N/A' || $state === 'Período expirado') {
                             return $state;
                         }
+
                         return \Carbon\Carbon::parse($state)->format('d/m/Y');
                     })
                     ->alignCenter(),
@@ -236,6 +242,7 @@ class OrganizationResource extends Resource
                             if ($remainingDays < 0) {
                                 return 'Expirado';
                             }
+
                             return sprintf('%d dias', $remainingDays);
                         }
 
@@ -258,15 +265,18 @@ class OrganizationResource extends Resource
             ])
             ->actions([
                 ActionGroup::make([
-                    ViewAction::make(),
-                    EditAction::make(),
+                    ViewAction::make()
+                        ->color('primary'),
+                    EditAction::make()
+                        ->color('secondary'),
                     DeleteAction::make(),
-                ]),
+                ])
+                ->icon('fas-sliders')
+                ->color('warning'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-
                 ]),
             ]);
     }
@@ -277,17 +287,17 @@ class OrganizationResource extends Resource
             UserRelationManager::class,
             SubscriptionRelationManager::class,
             SubscriptionRefundsRelationManager::class,
-
+            WhatsappInstanceRelationManager::class,
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListOrganizations::route('/'),
+            'index'  => Pages\ListOrganizations::route('/'),
             'create' => Pages\CreateOrganization::route('/create'),
-            'view' => Pages\ViewOrganization::route('/{record}'),
-            'edit' => Pages\EditOrganization::route('/{record}/edit'),
+            'view'   => Pages\ViewOrganization::route('/{record}'),
+            'edit'   => Pages\EditOrganization::route('/{record}/edit'),
         ];
     }
 

@@ -1,17 +1,16 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace App\Http\Middleware;
 
-use Closure;
-use App\Data\Cashier\Stripe;
 use App\Models\Organization;
-use Illuminate\Http\Request;
-use Filament\Pages\Dashboard;
+
 use function App\Support\tenant;
-use Illuminate\Support\Facades\Log;
-use App\Data\Stripe\StripeDataLoader;
+
+use Closure;
+use Filament\Pages\Dashboard;
+use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class VerifyBillableIsSubscribed
@@ -27,15 +26,17 @@ class VerifyBillableIsSubscribed
 
         // Verifica se o usuario é SuperAdmin e libera entrada sem subscription
         $user = $request->user();
+
         if ($user && $user->is_admin) {
             return $next($request);
         }
 
         // Verifica se o tenant tem subscription ativa e libera entrada
         $hasValidSubscription = $tenant->subscriptions()->active()->first();
-            if ($hasValidSubscription) {
-                return $next($request);
-            }
+
+        if ($hasValidSubscription) {
+            return $next($request);
+        }
 
         // Verifica se a ação de assinatura está sendo solicitada
         if ($request->has('action') && $request->get('action') === 'subscribe') {

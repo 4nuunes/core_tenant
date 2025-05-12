@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 return [
 
@@ -21,7 +21,7 @@ return [
     ],
 
     'ses' => [
-        'key' => env('AWS_ACCESS_KEY_ID'),
+        'key'    => env('AWS_ACCESS_KEY_ID'),
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
@@ -33,12 +33,18 @@ return [
     'slack' => [
         'notifications' => [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),
-            'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
+            'channel'              => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
 
     'stripe' => [
-         'secret' => env('STRIPE_SECRET'),
+        'secret' => env('STRIPE_SECRET'),
+    ],
+
+    'evolution' => [
+        'key'         => env('EVOLUTION_API_KEY'),
+        'url'         => env('EVOLUTION_URL'),
+        'url_webhook' => env('EVOLUTION_URL_WEBHOOK'),
     ],
 
 ];

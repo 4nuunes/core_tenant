@@ -1,8 +1,7 @@
 <?php
 
+use App\Http\Controllers\{EvolutionWebhookController, StripeWebhookController};
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\CheckoutController;
-use App\Http\Controllers\StripeWebhookController;
 
 Route::get('/', function () {
     return redirect('/app');
@@ -11,5 +10,5 @@ Route::get('/', function () {
 //Rota do webhook custom stripe
 Route::post('/stripe/webhook', [StripeWebhookController::class, 'handle']);
 
-
-
+//Rota do webhook custom evolution
+Route::post('/evolution/webhook', [EvolutionWebhookController::class, 'handle']);

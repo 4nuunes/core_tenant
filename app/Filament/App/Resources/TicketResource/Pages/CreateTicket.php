@@ -2,13 +2,12 @@
 
 namespace App\Filament\App\Resources\TicketResource\Pages;
 
-use Filament\Actions;
-use App\Models\Ticket;
-use Illuminate\Support\Facades\Auth;
-use Filament\Notifications\Notification;
-use Filament\Notifications\Actions\Action;
-use Filament\Resources\Pages\CreateRecord;
 use App\Filament\App\Resources\TicketResource;
+use App\Models\Ticket;
+use Filament\Notifications\Actions\Action;
+use Filament\Notifications\Notification;
+use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Support\Facades\Auth;
 
 class CreateTicket extends CreateRecord
 {
@@ -16,15 +15,14 @@ class CreateTicket extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $data['user_id'] = Auth::user()->id;        
-        return $data;      
+        $data['user_id'] = Auth::user()->id;
+
+        return $data;
     }
 
     protected function afterCreate(): void
     {
         $ticket = $this->record; // Recupera o ticket recém-criado ou atualizado
-
-        
 
         Notification::make()
             ->title('Chamado Registrado com Sucesso')
@@ -33,12 +31,10 @@ class CreateTicket extends CreateRecord
             ->actions([
                 Action::make('Visualizar')
                     ->url(TicketResource::getUrl('view', ['record' => $ticket->id])),
-                   
-                ])
-            ->sendToDatabase(Auth::user()); // Envia para o usuário relacionado ao ticket
-            
 
-            }
+            ])
+            ->sendToDatabase(Auth::user()); // Envia para o usuário relacionado ao ticket
 
     }
 
+}
